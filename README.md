@@ -1,5 +1,3 @@
-# XMTP Widget Contact Page
-
 # Contact Page Tutorial
 
 This widget is a React component that displays a page based on its ENS or domain and shows different buttons for contacting through XMTP. This tutorial will guide you through the process of creating such a widget.
@@ -79,5 +77,3 @@ defaultApp = "CustomApp";
 deepLinkApps = { deepLinkApps };
 />
 ```
-
-This way, contributors can easily add new apps by modifying the `deepLinkApps.js` file through PR's.
