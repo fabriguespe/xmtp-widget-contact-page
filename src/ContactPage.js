@@ -11,7 +11,10 @@ const styles = {
 };
 
 const ContactPage = () => {
-  const domain = window.location.pathname.split("/")[1];
+  const domain =
+    window.location.pathname.split("/")[1].length > 0
+      ? window.location.pathname.split("/")[1]
+      : undefined;
   return (
     <div style={styles.HomePageWrapper}>
       <ContactPageWidget domain={domain} deepLinkApps={deepLinkApps} />

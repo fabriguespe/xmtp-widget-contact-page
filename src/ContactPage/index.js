@@ -16,6 +16,7 @@ export function ContactPage({
   domain = "cryptocornerstore.eth",
   device = "All",
 }) {
+  const [isLoading, setIsLoading] = useState(false);
   const [walletAddress, setWalletAddress] = useState(initialWalletAddress);
 
   const [deviceSpecificApps, setDeviceSpecificApps] = useState([]);
@@ -73,9 +74,10 @@ export function ContactPage({
       fontWeight: "500",
       transition: "color 0.6s cubic-bezier(0.22, 1, 0.36, 1)",
       textDecoration: "none",
-      backgroundColor: "white",
       marginBottom: "30px",
-      cursor: "pointer",
+      // existing styles...
+      backgroundColor: isLoading ? "lightgrey" : "white",
+      cursor: isLoading ? "not-allowed" : "pointer",
     },
     ContactPageIcon: {
       width: "28px",
@@ -97,6 +99,7 @@ export function ContactPage({
   const [avatar, setAvatar] = useState(null);
 
   const resolveDomainToAddress = async () => {
+    setIsLoading(true);
     try {
       const provider = new ethers.providers.CloudflareProvider();
       const resolvedAddress = await provider.resolveName(domain);
@@ -116,6 +119,7 @@ export function ContactPage({
     } catch (error) {
       console.log(error);
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -140,8 +144,10 @@ export function ContactPage({
   const [canMessage, setCanMessage] = useState(null);
   useEffect(() => {
     const checkCanMessage = async () => {
+      setIsLoading(true);
       const result = await Client.canMessage(walletAddress);
       setCanMessage(result);
+      setIsLoading(false);
     };
 
     checkCanMessage();
@@ -197,10 +203,12 @@ export function ContactPage({
         )}
         <div style={styles.ContactPageWrapper}>
           <div style={styles.linkDomain}>{domain}</div>
-          <div className="instructions" style={styles.instructions}>
-            Just send a message to <b>{domain} </b>
-            using your preferred XMTP inbox, and hit send!
-          </div>
+          {!isLoading && canMessage && (
+            <div className="instructions" style={styles.instructions}>
+              Just send a message to <b>{domain}</b>
+              using your preferred XMTP inbox, and hit send!
+            </div>
+          )}
           {canMessage !== null && (
             <>
               {canMessage ? (
@@ -225,10 +233,16 @@ export function ContactPage({
                   </a>
                 ))
               ) : (
-                <p>
-                  You cannot send a message bacause this walet is not on the
-                  xmtp network.
-                </p>
+                <>
+                  {isLoading ? (
+                    <p>Loading...</p>
+                  ) : (
+                    <p>
+                      You cannot send a message bacause this walet is not on the
+                      xmtp network.
+                    </p>
+                  )}
+                </>
               )}
             </>
           )}
