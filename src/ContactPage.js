@@ -11,12 +11,10 @@ const styles = {
 };
 
 const ContactPage = () => {
+  const domain = window.location.pathname.split("/")[1];
   return (
     <div style={styles.HomePageWrapper}>
-      <ContactPageWidget
-        domain="cryptocornerstore.eth"
-        deepLinkApps={deepLinkApps}
-      />
+      <ContactPageWidget domain={domain} deepLinkApps={deepLinkApps} />
     </div>
   );
 };

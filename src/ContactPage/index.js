@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 import { ethers } from "ethers";
 import { Client } from "@xmtp/xmtp-js";
 import { AvatarResolver } from "@ensdomains/ens-avatar";
@@ -14,6 +13,7 @@ export function ContactPage({
       name: "xmtp.chat",
     },
   },
+  domain = "cryptocornerstore.eth",
   device = "All",
 }) {
   const [walletAddress, setWalletAddress] = useState(initialWalletAddress);
@@ -86,9 +86,6 @@ export function ContactPage({
       transition: "transform 0.5s ease",
     },
   };
-
-  let { domain } = useParams();
-  domain = domain || "cryptocornerstore.eth";
 
   useEffect(() => {
     const devicep = detectDevice(device);

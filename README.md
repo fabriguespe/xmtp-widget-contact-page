@@ -18,7 +18,7 @@ This widget is a React component that displays a page based on its ENS or domain
 ### Usage
 
 ```jsx
-<ContactPage domain="cryptocornerstore.eth" deepLinkApps={deepLinkApps} />
+<ContactPage deepLinkApps={deepLinkApps} />
 ```
 
 ### Installation
