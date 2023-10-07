@@ -16,7 +16,9 @@ export function ContactPage({
   domain = "cryptocornerstore.eth",
   device = "All",
 }) {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingResolveDomain, setIsLoadingResolveDomain] = useState(true);
+  const [isLoadingCanMessage, setIsLoadingCanMessage] = useState(true);
+
   const [walletAddress, setWalletAddress] = useState(initialWalletAddress);
 
   const [deviceSpecificApps, setDeviceSpecificApps] = useState([]);
@@ -76,8 +78,8 @@ export function ContactPage({
       textDecoration: "none",
       marginBottom: "30px",
       // existing styles...
-      backgroundColor: isLoading ? "lightgrey" : "white",
-      cursor: isLoading ? "not-allowed" : "pointer",
+      backgroundColor: isLoadingResolveDomain ? "lightgrey" : "white",
+      cursor: isLoadingResolveDomain ? "not-allowed" : "pointer",
     },
     ContactPageIcon: {
       width: "28px",
@@ -99,7 +101,7 @@ export function ContactPage({
   const [avatar, setAvatar] = useState(null);
 
   const resolveDomainToAddress = async () => {
-    setIsLoading(true);
+    setIsLoadingResolveDomain(true);
     try {
       const provider = new ethers.providers.CloudflareProvider();
       const resolvedAddress = await provider.resolveName(domain);
@@ -118,8 +120,9 @@ export function ContactPage({
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoadingResolveDomain(false);
     }
-    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -142,12 +145,19 @@ export function ContactPage({
   };
 
   const [canMessage, setCanMessage] = useState(null);
+
   useEffect(() => {
     const checkCanMessage = async () => {
-      setIsLoading(true);
-      const result = await Client.canMessage(walletAddress);
-      setCanMessage(result);
-      setIsLoading(false);
+      setIsLoadingCanMessage(true);
+      try {
+        const result = await Client.canMessage(walletAddress);
+        setCanMessage(result);
+      } catch (error) {
+        console.log("Error checking canMessage:", error);
+        setCanMessage(false);
+      } finally {
+        setIsLoadingCanMessage(false);
+      }
     };
 
     checkCanMessage();
@@ -203,48 +213,45 @@ export function ContactPage({
         )}
         <div style={styles.ContactPageWrapper}>
           <div style={styles.linkDomain}>{domain}</div>
-          {!isLoading && canMessage && (
+          {!isLoadingResolveDomain && canMessage && (
             <div className="instructions" style={styles.instructions}>
               Just send a message to <b>{domain}</b>
               using your preferred XMTP inbox, and hit send!
             </div>
           )}
-          {canMessage !== null && (
-            <>
-              {canMessage ? (
-                deviceSpecificApps.map((app, index) => (
-                  <a
-                    style={styles.listItemButton}
-                    key={index}
-                    className="listItemButton"
-                    target="_newtab"
-                    href={app.url
-                      .replace("{walletAddress}", walletAddress)
-                      .replace("{domain}", domain)}
-                  >
-                    <img
-                      style={styles.ContactPageIcon}
-                      src={app.icon}
-                      alt={`${app.name} Icon`}
-                      width="50px"
-                      className="logo"
-                    />
-                    Message on {app.name}
-                  </a>
-                ))
-              ) : (
-                <>
-                  {isLoading ? (
-                    <p>Loading...</p>
-                  ) : (
-                    <p>
-                      You cannot send a message bacause this walet is not on the
-                      xmtp network.
-                    </p>
-                  )}
-                </>
-              )}
-            </>
+
+          {isLoadingResolveDomain ? (
+            <p>Loading ...</p>
+          ) : isLoadingCanMessage ? (
+            <p>Loading canMessage...</p>
+          ) : canMessage === null ? (
+            <p>Error or not initialized.</p>
+          ) : canMessage ? (
+            deviceSpecificApps.map((app, index) => (
+              <a
+                style={styles.listItemButton}
+                key={index}
+                className="listItemButton"
+                target="_newtab"
+                href={app.url
+                  .replace("{walletAddress}", walletAddress)
+                  .replace("{domain}", domain)}
+              >
+                <img
+                  style={styles.ContactPageIcon}
+                  src={app.icon}
+                  alt={`${app.name} Icon`}
+                  width="50px"
+                  className="logo"
+                />
+                Message on {app.name}
+              </a>
+            ))
+          ) : (
+            <p>
+              You cannot send a message because this wallet is not on the xmtp
+              network.
+            </p>
           )}
         </div>
       </div>
