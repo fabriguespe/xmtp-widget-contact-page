@@ -90,7 +90,7 @@ export function ContactPage({
   };
 
   let { domain } = useParams();
-  domain = domain || "shanemac.eth";
+  domain = domain || "cryptocornerstore.eth";
 
   useEffect(() => {
     const devicep = detectDevice(device);
