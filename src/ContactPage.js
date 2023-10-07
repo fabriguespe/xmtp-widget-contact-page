@@ -15,9 +15,7 @@ const ContactPage = () => {
     <div style={styles.HomePageWrapper}>
       <ContactPageWidget
         domain="cryptocornerstore.eth"
-        theme={"light"}
         deepLinkApps={deepLinkApps}
-        size={"medium"}
       />
     </div>
   );

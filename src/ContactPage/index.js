@@ -14,8 +14,6 @@ export function ContactPage({
       name: "xmtp.chat",
     },
   },
-  theme = "default",
-  size = "medium",
   device = "All",
 }) {
   const [walletAddress, setWalletAddress] = useState(initialWalletAddress);
@@ -198,12 +196,7 @@ export function ContactPage({
             width={100}
           />
         ) : (
-          <SVGLogo
-            width={100}
-            parentClass={"ContactPage"}
-            theme={"default"}
-            size={"medium"}
-          />
+          <SVGLogo width={100} parentClass={"ContactPage"} />
         )}
         <div style={styles.ContactPageWrapper}>
           <div style={styles.linkDomain}>{domain}</div>
@@ -223,8 +216,6 @@ export function ContactPage({
                     href={app.url
                       .replace("{walletAddress}", walletAddress)
                       .replace("{domain}", domain)}
-                    theme={theme}
-                    size={size}
                   >
                     <img
                       style={styles.ContactPageIcon}
